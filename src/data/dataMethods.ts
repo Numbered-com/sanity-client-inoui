@@ -392,8 +392,8 @@ export function _getDataUrl(
   const catalog = validators.hasDataset(config)
   const baseUri = `/${operation}/${catalog}`
   const uri = path ? `${baseUri}/${path}` : baseUri
-  const uriWithTag = requestTag ? uri + (uri.indexOf('?') ? '&' : '?') + requestTag : uri
-  console.log('src/data/dataMethods.ts | _getDataUrl uriWithTag', uriWithTag)
+  const uriWithTag = requestTag ? uri + (uri.indexOf('?') !== -1 ? '&' : '?') + requestTag : uri
+  console.log('src/data/dataMethods.ts | uriWithTag', uriWithTag)
   return `/data${uriWithTag}`.replace(/\/($|\?)/, '$1')
 }
 
