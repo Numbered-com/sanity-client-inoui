@@ -26,6 +26,7 @@ export interface RequestOptions {
   query?: Any
   body?: Any
   signal?: AbortSignal
+  requestTag?: string
 }
 
 /**

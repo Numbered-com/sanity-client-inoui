@@ -82,7 +82,13 @@ export function _fetch<R, Q extends QueryParams>(
       ? {...opts, fetch: {cache, next}}
       : opts
 
-  return _dataRequest(client, httpRequest, 'query', {query, params}, reqOpts).pipe(map(mapResponse))
+  return _dataRequest(
+    client,
+    httpRequest,
+    'query',
+    {query, params, requestTag: options?.requestTag},
+    reqOpts,
+  ).pipe(map(mapResponse))
 }
 
 /** @internal */
@@ -222,9 +228,9 @@ export function _dataRequest(
   const useGet = !isMutation && strQuery.length < getQuerySizeLimit
   const stringQuery = useGet ? strQuery : ''
   const returnFirst = options.returnFirst
-  const {timeout, token, tag, headers} = options
+  const {timeout, token, tag, headers, requestTag} = options
 
-  const uri = _getDataUrl(client, endpoint, stringQuery)
+  const uri = _getDataUrl(client, endpoint, stringQuery, requestTag)
 
   const reqOptions = {
     method: useGet ? 'GET' : 'POST',
@@ -376,12 +382,14 @@ export function _getDataUrl(
   client: SanityClient | ObservableSanityClient,
   operation: string,
   path?: string,
+  requestTag?: string,
 ): string {
   const config = client.config()
   const catalog = validators.hasDataset(config)
   const baseUri = `/${operation}/${catalog}`
   const uri = path ? `${baseUri}/${path}` : baseUri
-  return `/data${uri}`.replace(/\/($|\?)/, '$1')
+  const uriWithTag = requestTag ? uri + (uri.indexOf('?') ? '&' : '?') + requestTag : uri
+  return `/data${uriWithTag}`.replace(/\/($|\?)/, '$1')
 }
 
 /**
