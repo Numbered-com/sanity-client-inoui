@@ -346,6 +346,7 @@ export function _requestObservable<R>(
     }
   }
 
+  console.log('src/data/dataMethods.ts | URL', _getUrl(client, uri, useCdn))
   const reqOptions = requestOptions(
     config,
     Object.assign({}, options, {
