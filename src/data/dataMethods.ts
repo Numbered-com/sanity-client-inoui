@@ -69,7 +69,6 @@ export function _fetch<R, Q extends QueryParams>(
   params?: Q,
   options: FilteredResponseQueryOptions | UnfilteredResponseQueryOptions = {},
 ): Observable<RawQueryResponse<R> | R> {
-  console.log('src/data/dataMethods.ts | _fetch options', options)
   const mapResponse =
     options.filterResponse === false ? (res: Any) => res : (res: Any) => res.result
   const {cache, next, ...opts} = {
@@ -82,8 +81,6 @@ export function _fetch<R, Q extends QueryParams>(
     typeof cache !== 'undefined' || typeof next !== 'undefined'
       ? {...opts, fetch: {cache, next}}
       : opts
-
-  console.log('src/data/dataMethods.ts | _fetch reqOpts', reqOpts)
 
   return _dataRequest(
     client,
@@ -229,10 +226,10 @@ export function _dataRequest(
   // in which case we can use GET. Otherwise, use POST.
   const strQuery = isMutation ? '' : encodeQueryString(body)
   const useGet = !isMutation && strQuery.length < getQuerySizeLimit
+  console.log('src/data/dataMethods.ts | ', useGet ? 'GET' : 'POST')
   const stringQuery = useGet ? strQuery : ''
   const returnFirst = options.returnFirst
   const {timeout, token, tag, headers, requestTag} = options
-  console.log('src/data/dataMethods.ts | _dataRequest requestTag', requestTag)
 
   const uri = _getDataUrl(client, endpoint, stringQuery, requestTag)
 
@@ -393,7 +390,7 @@ export function _getDataUrl(
   const baseUri = `/${operation}/${catalog}`
   const uri = path ? `${baseUri}/${path}` : baseUri
   const uriWithTag = requestTag ? uri + (uri.indexOf('?') !== -1 ? '&' : '?') + requestTag : uri
-  console.log('src/data/dataMethods.ts | uriWithTag', uriWithTag)
+  console.log('src/data/dataMethods.ts | uri', uri)
   return `/data${uriWithTag}`.replace(/\/($|\?)/, '$1')
 }
 
